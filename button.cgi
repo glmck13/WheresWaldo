@@ -2,6 +2,7 @@
 
 PATH=$PWD:$PATH
 BUTTONDIR=~www-data/html/run/button
+NOTIFYME=~www-data/html/etc/notifyme.conf
 
 [ "$REQUEST_METHOD" = "POST" ] && read -r QUERY_STRING
 
@@ -43,9 +44,27 @@ fi
 
 cd $BUTTONDIR
 print "$entry" >$owner.csv
-if [[ "$clickType" == "LONG" && -f $owner.conf ]]; then
-	sendaway.sh "$(<$owner.conf)" "Alert from $owner!" "${address:--}"
-fi
+
+grep "^$clickType:" $owner.conf 2>/dev/null | IFS=":" read x contacts
+
+contacts=${contacts// /} contacts+=","
+
+while [ "$contacts" ]
+do
+	id="${contacts%%,*}"
+
+	case "$id" in
+	*@*)
+		sendaway.sh "$id" "$owner $clickType click!" "${address:--}"
+		;;
+	\#*)
+		grep "^${id#?}," $NOTIFYME | IFS="," read x id
+		[ "$id" ] && curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$owner $clickType click $address")"
+		;;
+	esac
+
+	contacts="${contacts#*,}"
+done
 
 cat - <<EOF
 Content-type: text/plain

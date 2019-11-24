@@ -53,16 +53,25 @@ done
 (( oneDay = oneHour*24 ))
 
 cd $BUTTONDIR
+typeset -A conf
 
-alert=$(urlencode -d "$alert")
-
-if [ "$alert" = "-" ]; then
-	alert=""; rm -f ${REMOTE_USER}.conf
-elif [ "$alert" ]; then
-	print "$alert" >${REMOTE_USER}.conf
-elif [ -f ${REMOTE_USER}.conf ]; then
-	alert=$(<${REMOTE_USER}.conf)
+if [ -f ${REMOTE_USER}.conf ]; then
+	while IFS=":" read clickType contacts
+	do
+		conf["$clickType"]="$contacts"
+	done <${REMOTE_USER}.conf
 fi
+>${REMOTE_USER}.conf
+for clickType in SINGLE DOUBLE LONG
+do
+	contacts="$(eval urlencode -d "\$$clickType")"
+	if [ ! "$contacts" ]; then
+		contacts="${conf[$clickType]}"
+	else
+		conf["$clickType"]="$contacts"
+	fi
+	print "$clickType:$contacts" >>${REMOTE_USER}.conf
+done
 
 cat - <<EOF
 Content-type: text/html
@@ -91,44 +100,29 @@ do
 
 	(( secs = $(date +%s) - $(date --date="$reportedTime" +%s) ))
 
-	row="<tr><td>$owner</td>"
+	row="<tr><td>$owner</td><td>$clickType</td><td data-sort=$secs>$(timeElapsed)</td><td>$cellId: $address</td></tr>"
 
-	case $clickType in
-	SINGLE)
-		row+="<td>Heading out</td>"
-		;;
-	DOUBLE)
-		row+="<td>Arrived</td>"
-		;;
-	LONG)
-		row+="<td>Alert!</td>"
-		;;
-	esac
-
-	if [ "$row" ]; then
-
-		row+="<td data-sort=$secs>$(timeElapsed)</td>"
-
-		if [ "$cellId" ]; then
-			row+="<td>$cellId: $address</td>"
-		else
-			row+="<td>-</td>"
-		fi
-
-		row+="</tr>"
-
-		print "$row"
-	fi
+	print "$row"
 done
 
 cat - <<EOF
-</tbody>
-</table>
-<script>
-new Tablesort(document.getElementById('sort'));
-</script>
+</tbody></table>
+<script>new Tablesort(document.getElementById('sort'));</script>
 <form>
-$REMOTE_USER's alert contact(s): <input type="text" size=20 name="alert" value="$alert">
+<table class='style'>
+<thead><tr><th>Click Type</th><th>Contacts</th></tr></thead>
+<tbody>
+EOF
+
+for clickType in SINGLE DOUBLE LONG
+do
+cat - <<EOF
+<tr><td>$clickType</td><td><input type="text" size=30 name="$clickType" value="${conf[$clickType]}"></td></tr>
+EOF
+done
+
+cat - <<EOF
+</tbody></table>
 <input type="submit">
 </form>
 </body>
