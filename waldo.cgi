@@ -54,6 +54,16 @@ done
 
 cd $BUTTONDIR
 
+alert=$(urlencode -d "$alert")
+
+if [ "$alert" = "-" ]; then
+	alert=""; rm -f ${REMOTE_USER}.conf
+elif [ "$alert" ]; then
+	print "$alert" >${REMOTE_USER}.conf
+elif [ -f ${REMOTE_USER}.conf ]; then
+	alert=$(<${REMOTE_USER}.conf)
+fi
+
 cat - <<EOF
 Content-type: text/html
 
@@ -73,7 +83,7 @@ Content-type: text/html
 <tbody>
 EOF
 
-for owner in *
+for owner in $(ls *.csv 2>/dev/null)
 do
 	unset deviceId clickType reportedTime cellId address
 
@@ -91,7 +101,7 @@ do
 		row+="<td>Arrived</td>"
 		;;
 	LONG)
-		row=""
+		row+="<td>Alert!</td>"
 		;;
 	esac
 
@@ -117,6 +127,10 @@ cat - <<EOF
 <script>
 new Tablesort(document.getElementById('sort'));
 </script>
+<form>
+$REMOTE_USER's alert contact(s): <input type="text" size=20 name="alert" value="$alert">
+<input type="submit">
+</form>
 </body>
 </html>
 EOF

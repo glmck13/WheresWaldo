@@ -41,7 +41,11 @@ if [ "$cellId" ]; then
 	entry+=",$cellId,$address"
 fi
 
-cd $BUTTONDIR; print "$entry" >$owner.csv
+cd $BUTTONDIR
+print "$entry" >$owner.csv
+if [[ "$clickType" == "LONG" && -f $owner.conf ]]; then
+	sendaway.sh "$(<$owner.conf)" "Alert from $owner!" "${address:--}"
+fi
 
 cat - <<EOF
 Content-type: text/plain
