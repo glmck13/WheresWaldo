@@ -112,7 +112,7 @@ do
 		if [ "$cellId" ]; then
 			row+="<td>$cellId: $address</td>"
 		else
-			row+="<td>&nbsp;</td>"
+			row+="<td>-</td>"
 		fi
 
 		row+="</tr>"
