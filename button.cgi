@@ -59,7 +59,7 @@ do
 		;;
 	\#*)
 		grep "^${id#?}," $NOTIFYME | IFS="," read x id
-		[ "$id" ] && curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$owner $clickType click $address")"
+		[ "$id" ] && curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$owner $clickType click $address")" >/dev/null
 		;;
 	esac
 
