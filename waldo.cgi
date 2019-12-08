@@ -52,6 +52,10 @@ done
 (( oneHour = oneMin*60 ))
 (( oneDay = oneHour*24 ))
 
+if [ "$Password" ]; then
+	htpasswd -b .htpasswd $REMOTE_USER "$(eval urlencode -d "$Password")"
+fi
+
 cd $BUTTONDIR
 typeset -A conf
 
@@ -121,6 +125,7 @@ done
 
 cat - <<EOF
 </tbody></table>
+$REMOTE_USER's Password: <input type="password" name="Password">
 <input type="submit">
 </form>
 </body>
