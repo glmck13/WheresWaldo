@@ -108,7 +108,7 @@ cat - <<EOF
 <script>new Tablesort(document.getElementById('sort'));</script>
 <form>
 <table class='style'>
-<thead><tr><th>Click Type</th><th>Contacts</th></tr></thead>
+<thead><tr><th>Click Type</th><th>$REMOTE_USER's Contacts</th></tr></thead>
 <tbody>
 EOF
 

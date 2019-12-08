@@ -3,6 +3,7 @@
 PATH=$PWD:$PATH
 BUTTONDIR=~www-data/html/run/button
 NOTIFYME=~www-data/html/etc/notifyme.conf
+PHONES=~www-data/html/etc/phones.conf
 
 [ "$REQUEST_METHOD" = "POST" ] && read -r QUERY_STRING
 
@@ -16,7 +17,7 @@ done
 entry="$deviceId,$clickType,$(urlencode -d $reportedTime)"
 
 UNWIREDURL=https://us1.unwiredlabs.com/v2/process.php
-UNWIREDTOKEN=""
+UNWIREDTOKEN="a6df1ea571a590"
 NETWORKMCC=310
 NETWORKMNC=410
 
@@ -60,6 +61,10 @@ do
 	\#*)
 		grep "^${id#?}," $NOTIFYME | IFS="," read x id
 		[ "$id" ] && curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$owner $clickType click $address")" >/dev/null
+		;;
+	!*)
+		grep "^${id#?}," $PHONES 2>/dev/null | IFS="," read x id
+		[ "$id" ] && sendaway.sh "$id" "$owner $clickType click!" "${address:--}"
 		;;
 	esac
 
