@@ -93,7 +93,12 @@ Content-type: text/html
 </head>
 <body>
 <table id='sort' class='style'>
-<thead><tr><th>Who</th><th>What</th><th>When</th><th>Where</th></tr></thead>
+<thead><tr>
+<th data-sort-default>When</th>
+<th>What</th>
+<th>Who</th>
+<th>Where</th>
+</tr></thead>
 <tbody>
 EOF
 
@@ -105,7 +110,12 @@ do
 
 	(( secs = $(date +%s) - $(date --date="$reportedTime" +%s) ))
 
-	print "<tr><td>$owner</td><td>$clickType click</td><td data-sort=$secs>$(timeElapsed)</td><td>$cellId: $address</td></tr>"
+	print "<tr>\\c"
+	print "<td data-sort=$secs>$(timeElapsed)</td>\\c"
+	print "<td>$clickType click</td>\\c"
+	print "<td>$owner</td>\\c"
+	print "<td>$cellId: $address</td>\\c"
+	print "</tr>"
 done
 
 cat - <<EOF
