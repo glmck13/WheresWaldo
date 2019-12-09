@@ -104,7 +104,7 @@ do
 
 	(( secs = $(date +%s) - $(date --date="$reportedTime" +%s) ))
 
-	print "<tr><td>$owner</td><td>$clickType click</td><td data-sort=$secs>$(timeElapsed)</td><td>$cellId: $address</td></tr>"
+	print "<tr><td>$owner</td><td>$clickType click</td><td data-sort-method='number' data-sort=$secs>$(timeElapsed)</td><td>$cellId: $address</td></tr>"
 done
 
 cat - <<EOF
