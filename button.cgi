@@ -2,8 +2,7 @@
 
 PATH=$PWD:$PATH
 BUTTONDIR=~www-data/html/run/button
-NOTIFYME=~www-data/html/etc/notifyme.conf
-PHONES=~www-data/html/etc/phones.conf
+WALDOCONF=~www-data/html/etc/waldo.conf
 
 [ "$REQUEST_METHOD" = "POST" ] && read -r QUERY_STRING
 
@@ -55,16 +54,21 @@ do
 	id="${contacts%%,*}"
 
 	case "$id" in
+
 	*@*)
 		sendaway.sh "$id" "$owner $clickType click!" "${address:--}"
 		;;
+
 	\#*)
-		grep "^${id#?}," $NOTIFYME | IFS="," read x id
-		[ "$id" ] && curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$owner $clickType click $address")" >/dev/null
-		;;
-	!*)
-		grep "^${id#?}," $PHONES 2>/dev/null | IFS="," read x id
-		[ "$id" ] && sendaway.sh "$id" "$owner $clickType click!" "${address:--}"
+		grep "^${id#?}," $WALDOCONF | IFS="," read x id
+
+		if [ ! "$id" ]; then
+			:
+		elif [[ "$id" == *@* ]]; then
+			sendaway.sh "$id" "$owner $clickType click!" "${address:--}"
+		else
+			curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$owner $clickType click $address")" >/dev/null
+		fi
 		;;
 	esac
 
