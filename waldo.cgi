@@ -88,6 +88,7 @@ Content-type: text/html
 <link href='/css/tablesort.css' rel='stylesheet'>
 <link href='/css/style.css' rel='stylesheet'>
 <meta name="viewport" content="width=device-width">
+<link rel="apple-touch-icon" href="/images/waldo.png">
 <meta charset=utf-8 />
 <title>Where's Waldo?</title>
 </head>
