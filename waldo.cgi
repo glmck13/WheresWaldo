@@ -137,7 +137,8 @@ done
 
 cat - <<EOF
 </tbody></table>
-$REMOTE_USER's Password: <input type="password" name="Password">
+<strong>$REMOTE_USER's Password:</strong>
+<input type="password" name="Password">
 <input type="submit">
 </form>
 </body>
