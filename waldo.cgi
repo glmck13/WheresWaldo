@@ -61,21 +61,22 @@ typeset -A conf
 typeset -Z8 secs
 
 if [ -f ${REMOTE_USER}.conf ]; then
-	while IFS=":" read clickType contacts
+	while IFS="|" read clickType contacts
 	do
 		conf["$clickType"]="$contacts"
 	done <${REMOTE_USER}.conf
 fi
 >${REMOTE_USER}.conf
-for clickType in SINGLE DOUBLE LONG
+for clickType in SINGLE DOUBLE LONG HOME WORK GYM OTHER
 do
 	contacts="$(eval urlencode -d "\$$clickType")"
 	if [ ! "$contacts" ]; then
 		contacts="${conf[$clickType]}"
 	else
+		contacts=$(print "$contacts" | sed -e "s/^ \+//" -e "s/ \+$//")
 		conf["$clickType"]="$contacts"
 	fi
-	print "$clickType:$contacts" >>${REMOTE_USER}.conf
+	print "$clickType|$contacts" >>${REMOTE_USER}.conf
 done
 
 cat - <<EOF
@@ -107,7 +108,12 @@ for owner in $(ls *.csv 2>/dev/null)
 do
 	unset deviceId clickType reportedTime cellId address
 
-	IFS="," read deviceId clickType reportedTime cellId address <$owner; owner=${owner%.*}
+	IFS="|" read deviceId clickType reportedTime cellId address <$owner; owner=${owner%.*}
+
+	if [ "$cellId" ]; then
+		grep "^.*|$cellId$" $owner.conf 2>/dev/null | IFS="|" read alias x
+		[ "$alias" ] && address="$alias"
+	fi
 
 	(( secs = $(date +%s) - $(date --date="$reportedTime" +%s) ))
 
@@ -124,11 +130,11 @@ cat - <<EOF
 <script>new Tablesort(document.getElementById('sort'));</script>
 <form>
 <table class='style'>
-<thead><tr><th>Click Type</th><th>$REMOTE_USER's Contacts</th></tr></thead>
+<thead><tr><th>Key</th><th>Value</th></tr></thead>
 <tbody>
 EOF
 
-for clickType in SINGLE DOUBLE LONG
+for clickType in SINGLE DOUBLE LONG HOME WORK GYM OTHER
 do
 cat - <<EOF
 <tr><td>$clickType</td><td><input type="text" size=30 name="$clickType" value="${conf[$clickType]}"></td></tr>

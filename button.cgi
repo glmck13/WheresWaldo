@@ -13,7 +13,7 @@ do
 	[ "$v" ] && export $v
 done
 
-entry="$deviceId,$clickType,$(urlencode -d $reportedTime)"
+entry="$deviceId|$clickType|$(urlencode -d $reportedTime)"
 
 UNWIREDURL=https://us1.unwiredlabs.com/v2/process.php
 UNWIREDTOKEN=""
@@ -39,13 +39,13 @@ if [ "$cellId" ]; then
 		[ "$address" != "None" ] && break
 	done
 
-	entry+=",$cellId,$address"
+	entry+="|$cellId|$address"
 fi
 
 cd $BUTTONDIR
 print "$entry" >$owner.csv
 
-grep "^$clickType:" $owner.conf 2>/dev/null | IFS=":" read x contacts message
+grep "^$clickType|" $owner.conf 2>/dev/null | IFS="|:" read x contacts message
 
 contacts+=","
 
