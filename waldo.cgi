@@ -61,22 +61,22 @@ typeset -A conf
 typeset -Z8 secs
 
 if [ -f ${REMOTE_USER}.conf ]; then
-	while IFS="|" read clickType contacts
+	while IFS="|" read key contacts
 	do
-		conf["$clickType"]="$contacts"
+		conf["$key"]="$contacts"
 	done <${REMOTE_USER}.conf
 fi
 >${REMOTE_USER}.conf
-for clickType in SINGLE DOUBLE LONG HOME WORK GYM OTHER
+for key in SINGLE DOUBLE LONG HOME WORK GYM OTHER
 do
-	contacts="$(eval urlencode -d "\$$clickType")"
+	contacts="$(eval urlencode -d "\$$key")"
 	if [ ! "$contacts" ]; then
-		contacts="${conf[$clickType]}"
+		contacts="${conf[$key]}"
 	else
 		contacts=$(print "$contacts" | sed -e "s/^ \+//" -e "s/ \+$//")
-		conf["$clickType"]="$contacts"
+		conf["$key"]="$contacts"
 	fi
-	print "$clickType|$contacts" >>${REMOTE_USER}.conf
+	print "$key|$contacts" >>${REMOTE_USER}.conf
 done
 
 cat - <<EOF
@@ -94,7 +94,7 @@ Content-type: text/html
 <title>Where's Waldo?</title>
 </head>
 <body>
-<table id='sort' class='style'>
+<table id='waldo' class='style'>
 <thead><tr>
 <th data-sort-default>When</th>
 <th>What</th>
@@ -127,24 +127,31 @@ done
 
 cat - <<EOF
 </tbody></table>
-<script>new Tablesort(document.getElementById('sort'));</script>
+<script>new Tablesort(document.getElementById('waldo'));</script>
 <form>
-<table class='style'>
-<thead><tr><th>Key</th><th>Value</th></tr></thead>
-<tbody>
+<table class='style'><tbody>
 EOF
 
-for clickType in SINGLE DOUBLE LONG HOME WORK GYM OTHER
+print "<tr style='background-color:cornsilk;font-weight:bold;'><td>ClickType</td><td>$REMOTE_USER's Actions</td></tr>"
+for key in SINGLE DOUBLE LONG
 do
 cat - <<EOF
-<tr><td>$clickType</td><td><input type="text" size=30 name="$clickType" value="${conf[$clickType]}"></td></tr>
+<tr><td>$key</td><td><input size=30 type="text" name="$key" value="${conf[$key]}"></td></tr>
+EOF
+done
+
+print "<tr style='background-color:cornsilk;font-weight:bold;'><td>Location</td><td>$REMOTE_USER's Cellids</td></tr>"
+for key in HOME WORK GYM OTHER
+do
+cat - <<EOF
+<tr><td>$key</td><td><input size=30 type="text" name="$key" value="${conf[$key]}"></td></tr>
 EOF
 done
 
 cat - <<EOF
+<tr style='background-color:cornsilk;font-weight:bold;'><td>Profile</td><td>$REMOTE_USER's Settings</td></tr>
+<tr><td>Password</td><td><input size=30 type="password" name="Password"></td></tr>
 </tbody></table>
-<strong>$REMOTE_USER's Password:</strong>
-<input type="password" name="Password">
 <input type="submit">
 </form>
 </body>
