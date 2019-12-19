@@ -38,14 +38,13 @@ if [ "$cellId" ]; then
 		)
 		[ "$address" != "None" ] && break
 	done
-
-	entry+="|$cellId|$address"
 fi
 
 cd $BUTTONDIR
-print "$entry" >$owner.csv
 
 grep "^$clickType|" $owner.conf 2>/dev/null | IFS="|:" read x contacts message
+
+entry+="|$cellId|$address|$message"
 
 contacts+=","
 
@@ -54,6 +53,10 @@ do
 	print "$contacts" | IFS=", " read id contacts
 
 	case "$id" in
+
+	!)
+		print "$entry" >$owner.csv
+		;;
 
 	*@*)
 		sendaway.sh "$id" "$clickType click from $owner!" "${message:-${address:--}}"

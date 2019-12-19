@@ -81,9 +81,9 @@ EOF
 
 for owner in $(ls *.csv 2>/dev/null)
 do
-	unset deviceId clickType reportedTime cellId address
+	unset deviceId clickType reportedTime cellId address message
 
-	IFS="|" read deviceId clickType reportedTime cellId address <$owner; owner=${owner%.*}
+	IFS="|" read deviceId clickType reportedTime cellId address message <$owner; owner=${owner%.*}
 
 	if [ "$cellId" ]; then
 		grep "^.*|$cellId$" $owner.conf 2>/dev/null | IFS="|" read alias x
@@ -97,7 +97,7 @@ do
 	<td data-sort=$secs>$(timeElapsed)</td>
 	<td>$clickType click</td>
 	<td>$owner</td>
-	<td>$cellId: $address</td>
+	<td>$cellId: $address: $message</td>
 	</tr>
 	EOF
 done
