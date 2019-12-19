@@ -52,32 +52,8 @@ done
 (( oneHour = oneMin*60 ))
 (( oneDay = oneHour*24 ))
 
-if [ "$Password" ]; then
-	htpasswd -b .htpasswd $REMOTE_USER "$(eval urlencode -d "$Password")"
-fi
-
 cd $BUTTONDIR
-typeset -A conf
 typeset -Z8 secs
-
-if [ -f ${REMOTE_USER}.conf ]; then
-	while IFS="|" read key contacts
-	do
-		conf["$key"]="$contacts"
-	done <${REMOTE_USER}.conf
-fi
->${REMOTE_USER}.conf
-for key in SINGLE DOUBLE LONG HOME WORK GYM OTHER
-do
-	contacts="$(eval urlencode -d "\$$key")"
-	if [ ! "$contacts" ]; then
-		contacts="${conf[$key]}"
-	else
-		contacts=$(print "$contacts" | sed -e "s/^ \+//" -e "s/ \+$//")
-		conf["$key"]="$contacts"
-	fi
-	print "$key|$contacts" >>${REMOTE_USER}.conf
-done
 
 cat - <<EOF
 Content-type: text/html
@@ -90,7 +66,6 @@ Content-type: text/html
 <link href='/css/style.css' rel='stylesheet'>
 <meta name="viewport" content="width=device-width">
 <link rel="apple-touch-icon" href="/images/waldo.png">
-<meta charset=utf-8 />
 <title>Where's Waldo?</title>
 </head>
 <body>
@@ -128,32 +103,7 @@ done
 cat - <<EOF
 </tbody></table>
 <script>new Tablesort(document.getElementById('waldo'));</script>
-<form>
-<table class='style'><tbody>
-EOF
-
-print "<tr style='background-color:cornsilk;font-weight:bold;'><td>ClickType</td><td>$REMOTE_USER's Actions</td></tr>"
-for key in SINGLE DOUBLE LONG
-do
-cat - <<EOF
-<tr><td>$key</td><td><input size=30 type="text" name="$key" value="${conf[$key]}"></td></tr>
-EOF
-done
-
-print "<tr style='background-color:cornsilk;font-weight:bold;'><td>Location</td><td>$REMOTE_USER's Cellids</td></tr>"
-for key in HOME WORK GYM OTHER
-do
-cat - <<EOF
-<tr><td>$key</td><td><input size=30 type="text" name="$key" value="${conf[$key]}"></td></tr>
-EOF
-done
-
-cat - <<EOF
-<tr style='background-color:cornsilk;font-weight:bold;'><td>Profile</td><td>$REMOTE_USER's Settings</td></tr>
-<tr><td>Password</td><td><input size=30 type="password" name="Password"></td></tr>
-</tbody></table>
-<input type="submit">
-</form>
+<a href="waldoconf.cgi">Edit $REMOTE_USER's Config</a>
 </body>
 </html>
 EOF
