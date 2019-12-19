@@ -38,7 +38,7 @@ do
 	print "$key|$value" >>${REMOTE_USER}.conf
 done
 
-cat - <<EOF
+cat - <<-EOF
 Content-type: text/html
 
 <html>
@@ -55,7 +55,7 @@ EOF
 print "<tr style='background-color:cornsilk;font-weight:bold;'><td>ClickType</td><td>$REMOTE_USER's Actions</td></tr>"
 for key in SINGLE DOUBLE LONG
 do
-cat - <<EOF
+cat - <<-EOF
 <tr><td>$key</td><td><input size=30 type="text" name="$key" value="${conf[$key]}"></td></tr>
 EOF
 done
@@ -63,12 +63,12 @@ done
 print "<tr style='background-color:cornsilk;font-weight:bold;'><td>Location</td><td>$REMOTE_USER's Cellids</td></tr>"
 for key in HOME WORK GYM OTHER
 do
-cat - <<EOF
+cat - <<-EOF
 <tr><td>$key</td><td><input size=30 type="text" name="$key" value="${conf[$key]}"></td></tr>
 EOF
 done
 
-cat - <<EOF
+cat - <<-EOF
 <tr style='background-color:cornsilk;font-weight:bold;'><td>Profile</td><td>$REMOTE_USER's Settings</td></tr>
 <tr><td>Password</td><td><input size=30 type="password" name="Password"></td></tr>
 </tbody></table>

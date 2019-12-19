@@ -55,7 +55,7 @@ done
 cd $BUTTONDIR
 typeset -Z8 secs
 
-cat - <<EOF
+cat - <<-EOF
 Content-type: text/html
 
 <html>
@@ -92,15 +92,17 @@ do
 
 	(( secs = $(date +%s) - $(date --date="$reportedTime" +%s) ))
 
-	print "<tr>\\c"
-	print "<td data-sort=$secs>$(timeElapsed)</td>\\c"
-	print "<td>$clickType click</td>\\c"
-	print "<td>$owner</td>\\c"
-	print "<td>$cellId: $address</td>\\c"
-	print "</tr>"
+	cat - <<-EOF
+	<tr>
+	<td data-sort=$secs>$(timeElapsed)</td>
+	<td>$clickType click</td>
+	<td>$owner</td>
+	<td>$cellId: $address</td>
+	</tr>
+	EOF
 done
 
-cat - <<EOF
+cat - <<-EOF
 </tbody></table>
 <script>new Tablesort(document.getElementById('waldo'));</script>
 <a href="waldoconf.cgi">Edit $REMOTE_USER's Config</a>
