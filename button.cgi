@@ -13,6 +13,9 @@ do
 	[ "$v" ] && export $v
 done
 
+[ "$owner" ] || exit
+[ "$clickType" ] || exit
+
 entry="$deviceId|$clickType|$(urlencode -d $reportedTime)"
 
 UNWIREDURL=https://us1.unwiredlabs.com/v2/process.php
@@ -54,7 +57,8 @@ do
 
 	case "$id" in
 
-	!)
+	!*)
+		[ "${id#?}" ] && entry+=$(${id#?})
 		print "$entry" >$owner.csv
 		;;
 

@@ -105,7 +105,7 @@ done
 cat - <<-EOF
 </tbody></table>
 <script>new Tablesort(document.getElementById('waldo'));</script>
-<a href="waldoconf.cgi">Edit $REMOTE_USER's Config</a>
+<a href="waldoconf.cgi">Edit ${REMOTE_USER:-Who}'s Config</a>
 </body>
 </html>
 EOF

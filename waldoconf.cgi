@@ -12,6 +12,8 @@ do
 	[ "$v" ] && export $v
 done
 
+[ "$REMOTE_USER" ] || exit
+
 if [ "$Password" ]; then
 	htpasswd -b .htpasswd $REMOTE_USER "$(eval urlencode -d "$Password")"
 fi
