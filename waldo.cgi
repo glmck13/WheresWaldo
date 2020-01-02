@@ -86,7 +86,7 @@ do
 	IFS="|" read deviceId clickType reportedTime cellId address message <$owner; owner=${owner%.*}
 
 	if [ "$cellId" ]; then
-		grep "^.*|$cellId$" $owner.conf 2>/dev/null | IFS="|" read alias x
+		grep "$cellId" $owner.conf 2>/dev/null | IFS="|" read alias x
 		[ "$alias" ] && address="$alias"
 	fi
 

@@ -19,7 +19,7 @@ done
 entry="$deviceId|$clickType|$(urlencode -d $reportedTime)"
 
 UNWIREDURL=https://us1.unwiredlabs.com/v2/process.php
-UNWIREDTOKEN=""
+UNWIREDTOKEN="a6df1ea571a590"
 NETWORKMCC=310
 NETWORKMNC=410
 
@@ -49,6 +49,11 @@ grep "^$clickType|" $owner.conf 2>/dev/null | IFS="|:" read x contacts message
 
 entry+="|$cellId|$address|$message"
 
+if [ "$cellId" ]; then
+	grep "$cellId" $owner.conf 2>/dev/null | IFS="|" read alias x
+	[ "$alias" ] && address="$alias"
+fi
+
 contacts+=","
 
 while [ "$contacts" ]
@@ -63,7 +68,7 @@ do
 		;;
 
 	*@*)
-		sendaway.sh "$id" "$clickType click from $owner!" "${message:-${address:--}}"
+		sendaway.sh "$id" "$clickType click from $owner!" "$address: $message"
 		;;
 
 	\#*)
@@ -72,9 +77,9 @@ do
 		if [ ! "$id" ]; then
 			:
 		elif [[ "$id" == *@* ]]; then
-			sendaway.sh "$id" "$clickType click from $owner!" "${message:-${address:--}}"
+			sendaway.sh "$id" "$clickType click from $owner!" "$address: $message"
 		else
-			curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$clickType click from $owner ${message:-${address:--}}")" >/dev/null
+			curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$clickType click from $owner: $address: $message")" >/dev/null
 		fi
 		;;
 	esac
