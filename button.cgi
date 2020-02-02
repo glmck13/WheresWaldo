@@ -19,7 +19,7 @@ done
 entry="$deviceId|$clickType|$(urlencode -d $reportedTime)"
 
 UNWIREDURL=https://us1.unwiredlabs.com/v2/process.php
-UNWIREDTOKEN=""
+UNWIREDTOKEN="a6df1ea571a590"
 NETWORKMCC=310
 NETWORKMNC=410
 
@@ -79,7 +79,7 @@ do
 		elif [[ "$id" == *@* ]]; then
 			sendaway.sh "$id" "$clickType click from $owner!" "$address: $message"
 		else
-			curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$clickType click from $owner: $address: $message")" >/dev/null
+			curl -s "https://api.notifymyecho.com/v1/NotifyMe?accessCode=$id&notification=$(urlencode "$clickType click from $owner $(date "+on %A at %r"): $address: $message")" >/dev/null
 		fi
 		;;
 	esac
