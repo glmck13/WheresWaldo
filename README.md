@@ -1,6 +1,8 @@
 # WheresWaldo
 App to track family whereabouts using AWS 1-Click IoT service &amp; buttons  
 
+<img src=https://github.com/glmck13/WheresWaldo/blob/master/docs/wheres_waldo.png>  
+
 ## Background
 At the end of 2017, AWS announced the availability of a new service called AWS IoT 1-Click.  The service allows users to deploy push-button devices throughout their environment that can initiate actions in the cloud when the buttons are activated.  The service currently supports two types of buttons: one that relies on WiFi (sold by Amazon), and another that uses LTE-M (sold by AT&T).  The LTE-M button is particularly powerful since it can connect to the network wherever it is - there's no need to tether it to a local WiFi source.  Moreover, the LTE-M button will report the cell tower that it's currently connected to (more on that later...)  AT&T's LTE-M button is currently marketed to enterprise business customers, but there are compelling use-cases for the consumer market as well.  One of these is an app to track family whereabouts.  The use case is very simple... Each family member is issued an AT&T LTE-M button for personal use, and an Amazon button for use in the home:  
 
