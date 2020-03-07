@@ -2,7 +2,6 @@
 
 PATH=$PWD:$PATH
 BUTTONDIR=~www-data/html/run/button
-WALDOCONF=~www-data/html/etc/waldo.conf
 
 [ "$REQUEST_METHOD" = "POST" ] && read -r QUERY_STRING
 
@@ -72,7 +71,7 @@ do
 		;;
 
 	\#*)
-		grep "^${id#?}," $WALDOCONF | IFS="," read x id
+		grep "^Address|" "${id#?}.conf" 2>/dev/null | IFS="|" read x id
 
 		if [ ! "$id" ]; then
 			:
