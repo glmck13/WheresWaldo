@@ -18,7 +18,7 @@ done
 entry="$deviceId|$clickType|$(urlencode -d $reportedTime)"
 
 UNWIREDURL=https://us1.unwiredlabs.com/v2/process.php
-UNWIREDTOKEN="a6df1ea571a590"
+UNWIREDTOKEN=""
 NETWORKMCC=310
 NETWORKMNC=410
 
